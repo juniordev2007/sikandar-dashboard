@@ -109,7 +109,7 @@ export default function Generate() {
         onClose={closeGeneratedLinkModal}
         title={
           <Title order={4} fw={600}>
-            Generate Link
+            Generated Link
           </Title>
         }
         padding={16}
