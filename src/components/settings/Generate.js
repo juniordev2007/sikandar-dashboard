@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 import { AppContext } from "@/context/AppContext";
-import { Button, Flex, Modal, Select, Space, Text, TextInput, Title } from "@mantine/core";
+import { Button, Flex, Modal, Paper, Select, Space, Text, TextInput, Title } from "@mantine/core";
 
 // const baseUrl = "http://localhost:5500";
 const baseUrl = "https://sikandar-spin.netlify.app/";
@@ -9,7 +9,6 @@ export default function Generate() {
   const [selectedVendor, setSelectedVendor] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState("");
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
-  const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
   const [showGeneratedLinkModal, setShowGeneratedLinkModal] = useState("");
 
@@ -29,7 +28,6 @@ export default function Generate() {
     setSelectedVendor("");
     setSelectedCampaign("");
     setSelectedSubcategory("");
-    setShowGenerateModal(false);
   };
 
   const handleGenerate = () => {
@@ -50,24 +48,11 @@ export default function Generate() {
 
   return (
     <div>
-      <Button
-        onClick={() => {
-          setShowGenerateModal(true);
-        }}>
+      <Title order={4} fw={600} mb={24}>
         Generate Link
-      </Button>
-      <Modal
-        centered
-        withCloseButton={false}
-        opened={showGenerateModal}
-        onClose={handleCloseModal}
-        title={
-          <Title order={4} fw={600}>
-            Generate Link
-          </Title>
-        }
-        padding={16}
-        size={360}>
+      </Title>
+
+      <Paper shadow="none" withBorder p="lg">
         <Select
           label="Campaign"
           placeholder="Pick one"
@@ -100,7 +85,7 @@ export default function Generate() {
             Generate
           </Button>
         </Flex>
-      </Modal>
+      </Paper>
 
       <Modal
         centered
