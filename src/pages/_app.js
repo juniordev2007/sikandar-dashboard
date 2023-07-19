@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }) {
     <>
       <Head>
         <meta charSet="utf-8" />
-        <link rel="icon" href="/logo.png" />
+        <link rel="icon" href="/logo.webp" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Sikander Dasboard</title>
       </Head>

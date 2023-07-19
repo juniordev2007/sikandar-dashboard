@@ -41,8 +41,8 @@ export default function Login() {
   return (
     <Center style={{ height: "100vh", background: "#efefef" }}>
       <Paper radius="sm" p="xl" withBorder w={360}>
-        <Center mb={24}>
-          <img src="logo.png" alt="" width={120} />
+        <Center mt={-40} mb={-30}>
+          <img src="logo.webp" alt="" width={160} />
         </Center>
         <form onSubmit={handleLogin}>
           <Stack>

@@ -31,8 +31,8 @@ export default function Layout({ children }) {
       className="main-shell"
       navbar={
         <Navbar p="md" width={{ sm: 170 }}>
-          <Navbar.Section my={10}>
-            <img src="logo.png" alt="" width={120} />
+          <Navbar.Section mt={-20} mb={-30}>
+            <img src="logo.webp" alt="" width={140} />
           </Navbar.Section>
           <Navbar.Section mt={20}>
             {navLinks.map((link) => (

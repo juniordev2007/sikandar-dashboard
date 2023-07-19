@@ -3,7 +3,7 @@ import { AppContext } from "@/context/AppContext";
 import { Button, Flex, Modal, Paper, Select, Space, Text, TextInput, Title } from "@mantine/core";
 
 // const baseUrl = "http://localhost:5500";
-const baseUrl = "https://sikandar-spin.netlify.app/";
+const baseUrl = "https://sikander-spin.netlify.app/";
 
 export default function Generate() {
   const [selectedVendor, setSelectedVendor] = useState("");
