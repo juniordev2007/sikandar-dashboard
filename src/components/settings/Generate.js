@@ -41,7 +41,6 @@ export default function Generate() {
     if (selectedSubcategory) {
       mainUrl.searchParams.append("subcategory", selectedSubcategory);
     }
-    setShowGenerateModal(false);
     setShowGeneratedLinkModal(true);
     setGeneratedLink(mainUrl.toString());
   };
