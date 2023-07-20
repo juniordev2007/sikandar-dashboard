@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { AppShell, Navbar, useMantineTheme, NavLink, Modal, Text, Group, Button } from "@mantine/core";
-import { IconLayoutDashboard, IconAdjustments, IconLogout } from "@tabler/icons-react";
+import { IconLayoutDashboard, IconAdjustments, IconLink, IconLogout } from "@tabler/icons-react";
 
 export default function Layout({ children }) {
   const [showLogoutConfirmation, setShowLogoutConfirmation] = useState(false);
@@ -84,4 +84,5 @@ export default function Layout({ children }) {
 const navLinks = [
   { id: 1, icon: <IconLayoutDashboard strokeWidth={1.6} size={22} />, label: "Spins", href: "/dashboard" },
   { id: 1, icon: <IconAdjustments strokeWidth={1.6} size={22} />, label: "Settings", href: "/settings" },
+  { id: 1, icon: <IconLink strokeWidth={1.6} size={22} />, label: "Links", href: "/links" },
 ];

@@ -7,6 +7,7 @@ export default function AppProvider({ children }) {
   const [vendors, setVendors] = useState([]);
   const [campaigns, setCampaigns] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [generatedLinks, setGeneratedLinks] = useState([]);
 
   const fetchVendorsData = async () => {
     try {
@@ -32,17 +33,34 @@ export default function AppProvider({ children }) {
       console.log(err.message);
     }
   };
+  const fetchGeneratedLinks = async () => {
+    try {
+      const generatedLinksData = await db.collection("generatedLinks").get();
+      setGeneratedLinks(generatedLinksData.docs.map((doc) => ({ ...doc.data() })));
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
-      await Promise.all([fetchVendorsData(), fetchCampaignsData(), fetchSubcategoriesData()]);
+      await Promise.all([fetchVendorsData(), fetchCampaignsData(), fetchSubcategoriesData(), fetchGeneratedLinks()]);
     };
     fetchData();
   }, []);
 
   return (
     <AppContext.Provider
-      value={{ vendors, campaigns, subcategories, fetchVendorsData, fetchCampaignsData, fetchSubcategoriesData }}>
+      value={{
+        vendors,
+        campaigns,
+        subcategories,
+        fetchVendorsData,
+        fetchCampaignsData,
+        fetchSubcategoriesData,
+        generatedLinks,
+        fetchGeneratedLinks,
+      }}>
       {children}
     </AppContext.Provider>
   );

@@ -1,6 +1,9 @@
 import { useContext, useState } from "react";
 import { AppContext } from "@/context/AppContext";
-import { Button, Flex, Modal, Paper, Select, Space, Text, TextInput, Title } from "@mantine/core";
+import { v4 as uuid } from "uuid";
+import { Button, Flex, Modal, Paper, Select, Space, Table, Text, TextInput, Title } from "@mantine/core";
+import { db, timestamp } from "@/utils/firebase";
+import dayjs from "dayjs";
 
 // const baseUrl = "http://localhost:5500";
 const baseUrl = "https://sikander-spin.netlify.app/";
@@ -11,26 +14,22 @@ export default function Generate() {
   const [selectedSubcategory, setSelectedSubcategory] = useState("");
   const [generatedLink, setGeneratedLink] = useState("");
   const [showGeneratedLinkModal, setShowGeneratedLinkModal] = useState("");
+  const { vendors, campaigns, subcategories, generatedLinks, fetchGeneratedLinks } = useContext(AppContext);
 
-  const { vendors, campaigns, subcategories } = useContext(AppContext);
-
-  const handleCopyGeneratedLink = () => {
-    navigator.clipboard.writeText(generatedLink);
+  const handleCopyGeneratedLink = (link) => {
+    navigator.clipboard.writeText(link);
     alert("Link Copied!");
   };
 
-  const closeGeneratedLinkModal = () => {
+  const handleClose = () => {
     setShowGeneratedLinkModal(false);
     setGeneratedLink("");
-  };
-
-  const handleCloseModal = () => {
     setSelectedVendor("");
     setSelectedCampaign("");
     setSelectedSubcategory("");
   };
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     let mainUrl = new URL(baseUrl);
     if (selectedVendor) {
       mainUrl.searchParams.append("vendor", selectedVendor);
@@ -43,16 +42,25 @@ export default function Generate() {
     }
     setShowGeneratedLinkModal(true);
     setGeneratedLink(mainUrl.toString());
+
+    const id = uuid();
+    await db.collection("generatedLinks").doc(id).set({ id, link: mainUrl.toString(), generatedOn: timestamp });
+    fetchGeneratedLinks();
+    setSelectedVendor("");
+    setSelectedCampaign("");
+    setSelectedSubcategory("");
+  };
+
+  const handleRemove = async (id) => {
+    await db.collection("generatedLinks").doc(id).delete();
+    fetchGeneratedLinks();
   };
 
   return (
     <div>
-      <Title order={4} fw={600} mb={24}>
-        Generate Link
-      </Title>
-
-      <Paper shadow="none" withBorder p="lg">
+      <Paper shadow="none" withBorder p="lg" w={400}>
         <Select
+          value={selectedCampaign}
           label="Campaign"
           placeholder="Pick one"
           data={campaigns.map((campaign) => ({ value: campaign.name, label: campaign.name }))}
@@ -60,6 +68,7 @@ export default function Generate() {
         />
         <Space h="sm" />
         <Select
+          value={selectedVendor}
           label="Vendor"
           placeholder="Pick one"
           data={vendors.map((vendor) => ({ value: vendor.name, label: vendor.name }))}
@@ -67,6 +76,7 @@ export default function Generate() {
         />{" "}
         <Space h="sm" />
         <Select
+          value={selectedSubcategory}
           label="Subcategory"
           placeholder="Pick one"
           data={subcategories.map((subcategory) => ({ value: subcategory.name, label: subcategory.name }))}
@@ -74,7 +84,7 @@ export default function Generate() {
         />
         <Space h="xl" />
         <Flex justify="space-between" gap={12}>
-          <Button variant="outline" color="gray" style={{ flex: 1 }} onClick={handleCloseModal}>
+          <Button variant="outline" color="gray" style={{ flex: 1 }} onClick={handleClose}>
             Cancel
           </Button>
           <Button
@@ -90,7 +100,7 @@ export default function Generate() {
         centered
         withCloseButton={false}
         opened={showGeneratedLinkModal}
-        onClose={closeGeneratedLinkModal}
+        onClose={handleClose}
         title={
           <Title order={4} fw={600}>
             Generated Link
@@ -103,14 +113,44 @@ export default function Generate() {
         </Text>
         <Space h="xl" />
         <Flex justify="space-between" gap={12}>
-          <Button variant="outline" color="gray" style={{ flex: 1 }} onClick={closeGeneratedLinkModal}>
+          <Button variant="outline" color="gray" style={{ flex: 1 }} onClick={handleClose}>
             Close
           </Button>
-          <Button style={{ flex: 1 }} onClick={handleCopyGeneratedLink}>
+          <Button style={{ flex: 1 }} onClick={() => handleCopyGeneratedLink(generatedLink)}>
             Copy
           </Button>
         </Flex>
       </Modal>
+
+      {generatedLinks.length > 0 && (
+        <Paper shadow="none" withBorder mt={24}>
+          <Table p={20} horizontalSpacing="md" verticalSpacing="md" fontSize={15}>
+            <thead>
+              <tr>
+                <th>Link</th>
+                <th>Generated On</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {generatedLinks?.map((generatedLink) => (
+                <tr key={generatedLink.id}>
+                  {console.log(generatedLink)}
+                  <td>{generatedLink.link}</td>
+                  <td>{dayjs(new Date(generatedLink.generatedOn.seconds * 1000)).format("DD MMM YYYY")}</td>
+                  <th>
+                    <Button onClick={() => handleCopyGeneratedLink(generatedLink.link)}>Copy</Button>
+                    &nbsp;&nbsp;&nbsp;
+                    <Button color="red" variant="outline" onClick={() => handleRemove(generatedLink.id)}>
+                      Remove
+                    </Button>
+                  </th>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        </Paper>
+      )}
     </div>
   );
 }
